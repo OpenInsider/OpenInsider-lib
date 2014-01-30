@@ -24,13 +24,13 @@
 struct ringbuf insider_rx_ring;
 struct ringbuf insider_tx_ring;
 
-static uint8_t rx_buffer[1024];
-static uint8_t tx_buffer[1024];
+static uint8_t rx_buffer[256];
+static uint8_t tx_buffer[256];
 
 void insider_packet_init(void)
 {
-	ringbuf_init(&insider_rx_ring, rx_buffer, 1024);
-	ringbuf_init(&insider_tx_ring, tx_buffer, 1024);
+	ringbuf_init(&insider_rx_ring, rx_buffer, 256);
+	ringbuf_init(&insider_tx_ring, tx_buffer, 256);
 }
 
 void insider_packet_parse(uint8_t *data, size_t length)

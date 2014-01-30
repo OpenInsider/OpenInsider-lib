@@ -18,19 +18,56 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include "insider/packet.h"
 #include "insider/protocol.h"
 
+#define INSIDER_FIRMWARE_MAJOR		1
+#define INSIDER_FIRMWARE_MINOR		0
+#define INSIDER_BUFFERSIZE		255
+
+static const char* const board_name = "OpenInsider board driver";
+
 static const uint8_t reply_err_invalid_cmd[] = { INSIDER_RSP_ERR_INVALID_CMD };
 
+static void insider_protocol_getinfo(bool full)
+{
+	uint8_t reply[36];
+	size_t sz = 6;
+
+	reply[0] = 3;
+	reply[1] = 0;
+	reply[2] = 1;
+	reply[3] = INSIDER_FIRMWARE_MAJOR;
+	reply[4] = INSIDER_FIRMWARE_MINOR;
+	reply[5] = INSIDER_BUFFERSIZE;
+	
+	if (full) {
+		reply[6] = 0;	// recorder buffer length
+		reply[7] = 0;
+		reply[8] = 0;	// recorder time base
+		reply[9] = 0;
+		strcpy((char *)&reply[10], board_name);
+		sz += 29;
+	}
+	insider_packet_reply(reply, sz);
+	
+}
 
 void insider_protocol_parse(void)
 {
-	uint8_t cmd;
+	uint8_t cmd = 0;
 	
 	ringbuf_peek_byte(&insider_rx_ring, 0, &cmd);
 	
 	switch (cmd) {
+	case INSIDER_CMD_GET_INFO:
+		insider_protocol_getinfo(true);
+		break;
+
+	case INSIDER_CMD_GET_INFO_BRIEF:
+		insider_protocol_getinfo(false);
+		break;
 	
 	default:
 		insider_packet_reply(reply_err_invalid_cmd, 1);
