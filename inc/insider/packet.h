@@ -17,29 +17,21 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-#include "insider/packet.h"
-#include "insider/protocol.h"
+#ifndef INSIDER_PACKET_H_INCLUDED
+#define INSIDER_PACKET_H_INCLUDED
 
-static const uint8_t reply_err_invalid_cmd[] = { INSIDER_RSP_ERR_INVALID_CMD };
+#include "insider/ringbuf.h"
 
-
-void insider_protocol_parse(void)
-{
-	uint8_t cmd;
-	
-	ringbuf_peek_byte(&insider_rx_ring, 0, &cmd);
-	
-	switch (cmd) {
-	
-	default:
-		insider_packet_reply(reply_err_invalid_cmd, 1);
-		break;
-	}
-}
+/******************************************************************************
+* The API
+*******************************************************************************/
 
 
-void insider_init(void)
-{
-	insider_packet_init();
-}
+extern struct ringbuf insider_rx_ring;
+extern struct ringbuf insider_tx_ring;
+
+void insider_packet_init(void);
+void insider_packet_parse(uint8_t *data, size_t length);
+void insider_packet_reply(const uint8_t *data, size_t length);
+
+#endif /* INSIDER_PACKET_H_INCLUDED */
