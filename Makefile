@@ -36,7 +36,7 @@ include Makefile.common
 
 VPATH	+= src
 
-OBJS	+= packet.o protocol.o memory.o scope.o
+OBJS	+= packet.o protocol.o memory.o scope.o recorder.o
 
 
 TOBJS	:= $(OBJS:%.o=tmp/%.o)
