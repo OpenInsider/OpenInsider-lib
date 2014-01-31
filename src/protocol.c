@@ -21,6 +21,7 @@
 #include <string.h>
 #include "insider/packet.h"
 #include "insider/protocol.h"
+#include "insider/memory.h"
 
 #define INSIDER_FIRMWARE_MAJOR		1
 #define INSIDER_FIRMWARE_MINOR		0
@@ -57,10 +58,15 @@ static void insider_protocol_getinfo(bool full)
 void insider_protocol_parse(void)
 {
 	uint8_t cmd = 0;
+	size_t alen = 2;
+	uint8_t dlen = 0;
 	
 	ringbuf_peek_byte(&insider_rx_ring, 0, &cmd);
 	
 	switch (cmd) {
+	/**********************************************************************/
+	/* Information gathering operations */
+	
 	case INSIDER_CMD_GET_INFO:
 		insider_protocol_getinfo(true);
 		break;
@@ -68,7 +74,83 @@ void insider_protocol_parse(void)
 	case INSIDER_CMD_GET_INFO_BRIEF:
 		insider_protocol_getinfo(false);
 		break;
-	
+
+	/**********************************************************************/
+	/* Memory operations */
+
+	case INSIDER_CMD_GET8_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_GET8:
+		insider_memory_read(2, alen, 1);
+		break;
+
+	case INSIDER_CMD_GET16_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_GET16:
+		insider_memory_read(2, alen, 2);
+		break;
+
+	case INSIDER_CMD_GET32_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_GET32:
+		insider_memory_read(2, alen, 4);
+		break;
+
+	case INSIDER_CMD_MEMRD_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_MEMRD:
+		ringbuf_peek_buffer(&insider_rx_ring, 3,(uint8_t *)&dlen, 1);
+		insider_memory_read(4, alen, dlen);
+		break;
+
+	case INSIDER_CMD_SET8:
+		insider_memory_write(2, alen, 1);
+		break;
+
+	case INSIDER_CMD_SET16:
+		insider_memory_write(2, alen, 2);
+		break;
+
+	case INSIDER_CMD_SET32:
+		insider_memory_write(2, alen, 4);
+		break;
+
+	case INSIDER_CMD_MEMWR_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_MEMWR:
+		ringbuf_peek_buffer(&insider_rx_ring, 3,(uint8_t *)&dlen, 1);
+		insider_memory_write(4, alen, dlen);
+		break;
+
+	case INSIDER_CMD_SET8MASK:
+		insider_memory_write_mask(2, alen, 1);
+		break;
+
+	case INSIDER_CMD_SET16MASK:
+		insider_memory_write_mask(2, alen, 2);
+		break;
+
+	case INSIDER_CMD_MEMWRMASK_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_MEMWRMASK:
+		ringbuf_peek_buffer(&insider_rx_ring, 3,(uint8_t *)&dlen, 1);
+		insider_memory_write_mask(4, alen, dlen);
+		break;
+
+	/**********************************************************************/
+	/* Default */
 	default:
 		insider_packet_reply(reply_err_invalid_cmd, 1);
 		break;
