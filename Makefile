@@ -39,19 +39,22 @@ VPATH	+= src
 OBJS	+= packet.o protocol.o memory.o scope.o recorder.o
 
 
-TOBJS	:= $(OBJS:%.o=tmp/%.o)
-TDEPS	:= $(OBJS:%.o=tmp/%.o.d)
+TOBJS	:= $(addprefix tmp/,$(OBJS))
 
 ###############################################################################
 # Rules
 
-.PHONY: all clean
+.PHONY: all dirs clean
 
-all: bin/libopeninsider_$(TARGET).a
+all: bin tmp bin/libopeninsider_$(TARGET).a
 
 clean:
 	@printf "  \e[31;1mCLEAN\e[0m\n"
-	$(Q)$(RM) tmp/*.o tmp/*.d bin/*.a
+	$(Q)$(RM) -d -rf tmp bin
+
+distclean:
+	@printf "  \e[31;1mDISTCLEAN\e[0m\n"
+	$(Q)$(RM) -d -rf tmp
 
 bin/libopeninsider_$(TARGET).a: $(TOBJS)
 	@printf "  \e[33;1mAR\e[0m      libopeninsider_$(TARGET).a\n"
@@ -61,4 +64,12 @@ tmp/%o: %c
 	@printf "  \e[32;1mCC\e[0m      $<\n"
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -o $@ -c $<
 
--include $(TDEPS)
+bin:
+	@printf "  \e[35;1mDIR\e[0m     bin\n"
+	@mkdir -p bin
+
+tmp:
+	@printf "  \e[35;1mDIR\e[0m     tmp\n"
+	@mkdir -p tmp
+
+-include $(TOBJS:.o=.d)
