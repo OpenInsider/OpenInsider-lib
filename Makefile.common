@@ -43,4 +43,4 @@ CPPFLAGS	+= -Iinc $(DEFS)
 ###############################################################################
 # Archiver flags
 
-ARFLAGS		= rcsv
+ARFLAGS		= rcs
