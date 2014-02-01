@@ -1,0 +1,45 @@
+
+bin
+---
+
+This directory contains generated binary output files,
+
+*.a - the library
+*.pdf - doxygen documentation of the library
+
+
+doc
+---
+
+Documentation source files.
+
+
+inc
+---
+
+Library include files (*.h)
+
+
+src
+---
+
+Library sources (*.c)
+
+
+tmp
+---
+
+Temporary directory with intermediate object and dependency files.
+It may be deleted at any time.
+
+
+target
+------
+
+Support files for different CPUs
+
+
+toolchain
+---------
+
+Support files for different compiler toolchains
