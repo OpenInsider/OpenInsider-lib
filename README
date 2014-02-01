@@ -1,8 +1,0 @@
-------------------------------------------------------------------------------
-README
-------------------------------------------------------------------------------
-
-make TOOLCHAIN=arm-gcc
-make TOOLCHAIN=avr-gcc
-make TOOLCHAIN=codesourcery
-make TOOLCHAIN=llvm
