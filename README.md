@@ -9,9 +9,10 @@ Ethernet). The addresses of the watched variables are read from binary ELF
 file, so the user can easily specify the variable name.
 
   The first versions of this project is intended to be compatible with
-Freescale tool called FreeMASTER at message level over serial link, but this
-tool is intended to be run on other architectures than Motorola M68k. (ARM,
-Atmel AVR etc.)
+Freescale tool called [FreeMASTER](http://www.freescale.com/Freemaster) at
+message level over serial link, but this tool is intended to be run on other
+architectures than Motorola M68k. (ARM, Atmel AVR etc.)
+
 
 OpenInsider-lib
 ===============
