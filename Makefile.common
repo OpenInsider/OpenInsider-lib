@@ -38,7 +38,8 @@ CXXFLAGS	+= -fno-common -ffunction-sections -fdata-sections
 
 CPPFLAGS	+= -MD -MF tmp/$(@F).d
 CPPFLAGS	+= -Wall -Wundef
-CPPFLAGS	+= -Iinc $(DEFS)
+CPPFLAGS	+= -Iinc
+CPPFLAGS	+= $(addprefix -D,$(DEFS))
 
 ###############################################################################
 # Archiver flags

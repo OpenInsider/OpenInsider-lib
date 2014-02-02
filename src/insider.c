@@ -20,9 +20,8 @@
 #include <stdint.h>
 #include <string.h>
 #include "insider/insider.h"
-#include "insider/packet.h"
 
 void insider_init(void)
 {
-	insider_packet_init();
+	insider_buffer_init();
 }

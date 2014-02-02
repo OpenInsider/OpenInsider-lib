@@ -22,9 +22,21 @@
 #include "insider/protocol.h"
 #include "insider/scope.h"
 
+struct ringbuf insider_rx_ring;
+struct ringbuf insider_tx_ring;
+
+static uint8_t rx_buffer[INSIDER_BUFFER_SIZE];
+static uint8_t tx_buffer[INSIDER_BUFFER_SIZE];
+
+void insider_buffer_init(void)
+{
+	ringbuf_init(&insider_rx_ring, rx_buffer, INSIDER_BUFFER_SIZE);
+	ringbuf_init(&insider_tx_ring, tx_buffer, INSIDER_BUFFER_SIZE);
+}
+
 void insider_buffer_write(uint8_t *data, size_t length)
 {
-    ringbuf_write_buffer(&insider_rx_ring, data, length);
+	ringbuf_write_buffer(&insider_rx_ring, data, length);
 }
 
 size_t insider_buffer_read(uint8_t *data, size_t length)

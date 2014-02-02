@@ -51,6 +51,27 @@ Currently works the arm-gcc toolchain and stm32f4 target
 make TOOLCHAIN=arm-gcc TARGET=stm32f4
 ```
 
+Tweaking the library
+--------------------
+
+There are some additional variables, specfied in the make command that can
+affect library building process.
+
+```
+make VAR=value
+```
+
+Available variables:
+
+
+`INSIDER_BUFFER_SIZE=256`
+
+This parameter sets the size of receiving and transmitting communication ring
+buffer. Be aware that the value must be 2^n, and must be in the range <64,256>
+so that currently only values 64,128 and 256 are supported. Larger values will
+break compatibility with FreeMASTER and smaller values will break the FreeMASTER
+board detection process.
+
 
 Coding style and development guidelines
 ---------------------------------------

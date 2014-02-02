@@ -26,7 +26,6 @@
 
 #define INSIDER_FIRMWARE_MAJOR		1
 #define INSIDER_FIRMWARE_MINOR		0
-#define INSIDER_BUFFERSIZE		255
 
 static const char* const board_name = "OpenInsider board driver";
 
@@ -40,7 +39,7 @@ static void insider_protocol_getinfo(bool full)
 	reply[2] = 1;
 	reply[3] = INSIDER_FIRMWARE_MAJOR;
 	reply[4] = INSIDER_FIRMWARE_MINOR;
-	reply[5] = INSIDER_BUFFERSIZE;
+	reply[5] = INSIDER_BUFFER_SIZE-1; /* 255 is max, so we must use -1 */
 
 	if (full) {
 		reply[6] = 0;	// recorder buffer length

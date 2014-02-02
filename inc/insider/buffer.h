@@ -24,7 +24,7 @@
 * The API
 *******************************************************************************/
 
-
+void insider_buffer_init(void);
 void insider_buffer_write(uint8_t *data, size_t length);
 size_t insider_buffer_read(uint8_t *data, size_t length);
 

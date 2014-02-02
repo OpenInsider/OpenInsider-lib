@@ -25,6 +25,13 @@ ifeq ($(TARGET),)
 $(error TARGET not specified ! Stop.)
 endif
 
+###############################################################################
+# tweaking variables
+
+INSIDER_BUFFER_SIZE	?= 256
+
+
+
 # Be silent per default, but 'make V=1' will show all compiler calls.
 ifneq ($(V),1)
 Q := @
@@ -38,6 +45,7 @@ VPATH	+= src
 
 OBJS	+= insider.o buffer.o packet.o protocol.o memory.o scope.o recorder.o
 
+DEFS	+= INSIDER_BUFFER_SIZE=$(INSIDER_BUFFER_SIZE)
 
 TOBJS	:= $(addprefix tmp/,$(OBJS))
 
