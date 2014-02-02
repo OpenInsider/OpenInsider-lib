@@ -29,7 +29,8 @@ endif
 # tweaking variables
 
 INSIDER_BUFFER_SIZE	?= 256
-
+INSIDER_BOARD_FW	?= 0x0100
+INSIDER_BOARD_NAME	?= "OpenInsider board driver"
 
 
 # Be silent per default, but 'make V=1' will show all compiler calls.
@@ -45,7 +46,9 @@ VPATH	+= src
 
 OBJS	+= insider.o buffer.o packet.o protocol.o memory.o scope.o recorder.o
 
-DEFS	+= INSIDER_BUFFER_SIZE=$(INSIDER_BUFFER_SIZE)
+DEFS	+= -DINSIDER_BUFFER_SIZE=$(INSIDER_BUFFER_SIZE)
+DEFS	+= -DINSIDER_BOARD_FW=$(INSIDER_BOARD_FW)
+DEFS	+= -DINSIDER_BOARD_NAME=$(INSIDER_BOARD_NAME)
 
 TOBJS	:= $(addprefix tmp/,$(OBJS))
 

@@ -18,16 +18,14 @@
  */
 
 #include <stdint.h>
-#include <string.h>
 #include "insider/packet.h"
 #include "insider/protocol.h"
 #include "insider/memory.h"
 #include "insider/scope.h"
 
-#define INSIDER_FIRMWARE_MAJOR		1
-#define INSIDER_FIRMWARE_MINOR		0
+#define _Q(var)		#var
 
-static const char* const board_name = "OpenInsider board driver";
+static const char* const board_name = _Q(INSIDER_BOARD_NAME);
 
 static void insider_protocol_getinfo(bool full)
 {
@@ -37,8 +35,8 @@ static void insider_protocol_getinfo(bool full)
 	reply[0] = 3;
 	reply[1] = 0;
 	reply[2] = 1;
-	reply[3] = INSIDER_FIRMWARE_MAJOR;
-	reply[4] = INSIDER_FIRMWARE_MINOR;
+	reply[3] = (INSIDER_BOARD_FW >> 8) & 0xFF;
+	reply[4] = (INSIDER_BOARD_FW >> 0) & 0xFF;
 	reply[5] = INSIDER_BUFFER_SIZE-1; /* 255 is max, so we must use -1 */
 
 	if (full) {
@@ -46,7 +44,17 @@ static void insider_protocol_getinfo(bool full)
 		reply[7] = 0;
 		reply[8] = 0;	// recorder time base
 		reply[9] = 0;
-		strcpy((char *)&reply[10], board_name);
+		int i = 0;
+		while (i < 25) {
+			reply[10 + i] = board_name[i];
+			if (board_name[i] == 0)
+				break;
+			i++;
+		}
+		while (i < 25) {
+			reply[10 + i++] = 0;
+		}
+
 		sz += 29;
 	}
 	insider_packet_reply(INSIDER_RSP_SUCCESS, reply, sz);

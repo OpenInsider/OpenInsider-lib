@@ -72,6 +72,17 @@ so that currently only values 64,128 and 256 are supported. Larger values will
 break compatibility with FreeMASTER and smaller values will break the FreeMASTER
 board detection process.
 
+`INSIDER_BOARD_FW=0x0100`
+
+This parameter sets the firmware version number in the information structure
+in the board detection process. The value is two bytes, where high byte is major
+version number and low byte is minor version number.
+
+`INSIDER_BOARD_NAME="OpenInsider board driver"`
+
+The board name string returned in board detection process. The string is
+truncated at 25 characters.
+
 
 Coding style and development guidelines
 ---------------------------------------
