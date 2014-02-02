@@ -24,6 +24,7 @@
 * The API
 *******************************************************************************/
 
-
+void insider_scope_setup(size_t asiz);
+void insider_scope_read(void);
 
 #endif /* INSIDER_SCOPE_H_INCLUDED */

@@ -22,6 +22,7 @@
 #include "insider/packet.h"
 #include "insider/protocol.h"
 #include "insider/memory.h"
+#include "insider/scope.h"
 
 #define INSIDER_FIRMWARE_MAJOR		1
 #define INSIDER_FIRMWARE_MINOR		0
@@ -145,6 +146,20 @@ void insider_protocol_parse(void)
 	case INSIDER_CMD_MEMWRMASK:
 		ringbuf_peek_buffer(&insider_rx_ring, 3,(uint8_t *)&dlen, 1);
 		insider_memory_write_mask(4, alen, dlen);
+		break;
+
+	/**********************************************************************/
+	/* Scope */
+	case INSIDER_CMD_SCOPE_SETUP_EX:
+		alen = 4;
+		/* No break */
+
+	case INSIDER_CMD_SCOPE_SETUP:
+		insider_scope_setup(alen);
+		break;
+
+	case INSIDER_CMD_SCOPE_READ:
+		insider_scope_read();
 		break;
 
 	/**********************************************************************/

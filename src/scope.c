@@ -18,7 +18,55 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include "insider/insider.h"
 #include "insider/packet.h"
 #include "insider/protocol.h"
 #include "insider/scope.h"
+
+struct {
+	uint8_t sz;
+	uint8_t *ptr;
+} scope_vars[8];
+
+static size_t scope_var_count = 0;
+
+void insider_scope_setup(size_t asiz)
+{
+	scope_var_count = 0;
+
+	uint8_t cnt = 0;
+	uint32_t pos = 3;
+
+	ringbuf_peek_buffer(&insider_rx_ring, pos++, &cnt, 1);
+
+	for (size_t i=0; i< cnt; i++) {
+		ringbuf_peek_buffer(&insider_rx_ring, pos+0, &scope_vars[i].sz, 1);
+		ringbuf_peek_buffer(&insider_rx_ring, pos+1, (uint8_t *)&scope_vars[i].ptr, asiz);
+		pos += asiz + 1;
+	}
+
+	scope_var_count = cnt;
+
+	insider_packet_reply(INSIDER_RSP_SUCCESS, 0, 0);
+}
+
+void insider_scope_read(void)
+{
+	if (scope_var_count == 0) {
+		insider_packet_reply(INSIDER_RSP_ERR_UNINITIALIZED, 0, 0);
+		return;
+	}
+
+	uint8_t reply[32], *ptr = reply;
+	uint8_t cnt = 0;
+
+	for (size_t i = 0; i < scope_var_count; i++) {
+		memcpy(ptr, scope_vars[i].ptr, scope_vars[i].sz);
+		ptr += scope_vars[i].sz;
+		cnt += scope_vars[i].sz;
+	}
+
+	insider_packet_reply(INSIDER_RSP_SUCCESS, reply, cnt);
+}
+
