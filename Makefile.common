@@ -21,7 +21,7 @@
 ###############################################################################
 # C flags
 
-CFLAGS		+= -Os -g -std=c99
+CFLAGS		+= -O0 -g -std=c99
 CFLAGS		+= -Wextra -Wshadow -Wimplicit-function-declaration
 CFLAGS		+= -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes
 CFLAGS		+= -fno-common -ffunction-sections -fdata-sections

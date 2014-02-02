@@ -18,7 +18,11 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include "insider/insider.h"
 #include "insider/packet.h"
-#include "insider/protocol.h"
-#include "insider/scope.h"
+
+void insider_init(void)
+{
+	insider_packet_init();
+}

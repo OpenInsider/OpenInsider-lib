@@ -29,8 +29,6 @@
 
 static const char* const board_name = "OpenInsider board driver";
 
-static const uint8_t reply_err_invalid_cmd[] = { INSIDER_RSP_ERR_INVALID_CMD };
-
 static void insider_protocol_getinfo(bool full)
 {
 	uint8_t reply[36];
@@ -42,7 +40,7 @@ static void insider_protocol_getinfo(bool full)
 	reply[3] = INSIDER_FIRMWARE_MAJOR;
 	reply[4] = INSIDER_FIRMWARE_MINOR;
 	reply[5] = INSIDER_BUFFERSIZE;
-	
+
 	if (full) {
 		reply[6] = 0;	// recorder buffer length
 		reply[7] = 0;
@@ -51,8 +49,8 @@ static void insider_protocol_getinfo(bool full)
 		strcpy((char *)&reply[10], board_name);
 		sz += 29;
 	}
-	insider_packet_reply(reply, sz);
-	
+	insider_packet_reply(INSIDER_RSP_SUCCESS, reply, sz);
+
 }
 
 void insider_protocol_parse(void)
@@ -60,13 +58,13 @@ void insider_protocol_parse(void)
 	uint8_t cmd = 0;
 	size_t alen = 2;
 	uint8_t dlen = 0;
-	
-	ringbuf_peek_byte(&insider_rx_ring, 0, &cmd);
-	
+
+	ringbuf_peek_byte(&insider_rx_ring, 1, &cmd);
+
 	switch (cmd) {
 	/**********************************************************************/
 	/* Information gathering operations */
-	
+
 	case INSIDER_CMD_GET_INFO:
 		insider_protocol_getinfo(true);
 		break;
@@ -152,13 +150,7 @@ void insider_protocol_parse(void)
 	/**********************************************************************/
 	/* Default */
 	default:
-		insider_packet_reply(reply_err_invalid_cmd, 1);
+		insider_packet_reply(INSIDER_RSP_ERR_INVALID_CMD, 0, 0);
 		break;
 	}
-}
-
-
-void insider_init(void)
-{
-	insider_packet_init();
 }

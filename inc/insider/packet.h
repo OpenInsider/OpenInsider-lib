@@ -21,6 +21,8 @@
 #define INSIDER_PACKET_H_INCLUDED
 
 #include "insider/ringbuf.h"
+#include "insider/buffer.h"
+
 
 /******************************************************************************
 * The API
@@ -31,7 +33,8 @@ extern struct ringbuf insider_rx_ring;
 extern struct ringbuf insider_tx_ring;
 
 void insider_packet_init(void);
-void insider_packet_parse(uint8_t *data, size_t length);
-void insider_packet_reply(const uint8_t *data, size_t length);
+bool insider_packet_parse(void);
+void insider_packet_reply(uint8_t code, const uint8_t *data, size_t length);
+
 
 #endif /* INSIDER_PACKET_H_INCLUDED */

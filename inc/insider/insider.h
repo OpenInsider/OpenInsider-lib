@@ -17,8 +17,16 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-#include "insider/insider.h"
-#include "insider/packet.h"
-#include "insider/protocol.h"
-#include "insider/scope.h"
+#ifndef INSIDER_INSIDER_H_INCLUDED
+#define INSIDER_INSIDER_H_INCLUDED
+
+/******************************************************************************
+* The API
+*******************************************************************************/
+
+#include <stddef.h>
+#include "insider/buffer.h"
+
+void insider_init(void);
+
+#endif /* INSIDER_INSIDER_H_INCLUDED */

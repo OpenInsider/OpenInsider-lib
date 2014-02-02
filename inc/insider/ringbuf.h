@@ -224,6 +224,28 @@ bool ringbuf_read_buffer(struct ringbuf *rb, uint8_t *data, size_t bufsiz)
 	return true;
 }
 
+static inline
+size_t ringbuf_read_buffer_partial(struct ringbuf *rb, uint8_t *data, size_t bufsiz)
+{
+	if (rb->wptr == rb->rptr)
+		return 0;
+
+	size_t cnt = ringbuf_read_available(rb);
+
+	if (cnt > bufsiz)
+		cnt = bufsiz;
+	if (cnt < bufsiz)
+		bufsiz = cnt;
+
+	/* ToDo use two memcpy calls */
+	while (bufsiz-- > 0) {
+		*data++ = rb->buffer[rb->rptr];
+		rb->rptr = (rb->rptr + 1) & rb->mask;
+	}
+
+	return cnt;
+}
+
 /*---------------------------------------------------------------------------*/
 /** @brief Skip data inside the ring
  *

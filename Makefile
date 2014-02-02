@@ -36,7 +36,7 @@ include Makefile.common
 
 VPATH	+= src
 
-OBJS	+= packet.o protocol.o memory.o scope.o recorder.o
+OBJS	+= insider.o buffer.o packet.o protocol.o memory.o scope.o recorder.o
 
 
 TOBJS	:= $(addprefix tmp/,$(OBJS))

@@ -21,7 +21,7 @@
 #define INSIDER_PROTOCOL_H_INCLUDED
 
 /******************************************************************************
-* Packet protocol constants 
+* Packet protocol constants
 *******************************************************************************/
 
 #define INSIDER_PACKET_START			'+'
@@ -29,7 +29,7 @@
 #define INSIDER_PACKET_LEN(cmd)			(((cmd) >> 3) & 6)
 
 /******************************************************************************
-* Packet protocol Queries 
+* Packet protocol Queries
 *******************************************************************************/
 
 #define INSIDER_CMD_MEMRD			0x01
@@ -97,6 +97,6 @@
 *******************************************************************************/
 
 void insider_protocol_parse(void);
-void insider_init(void);
+
 
 #endif /* INSIDER_PROTOCOL_H_INCLUDED */

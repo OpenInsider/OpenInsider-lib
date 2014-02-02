@@ -33,74 +33,68 @@ void insider_packet_init(void)
 	ringbuf_init(&insider_tx_ring, tx_buffer, 256);
 }
 
-void insider_packet_parse(uint8_t *data, size_t length)
+bool insider_packet_parse(void)
 {
-	do {
-		/* Write the received data to the buffer */
-		length -= ringbuf_write_buffer_partial(&insider_rx_ring, data,
-							length);
-
-		uint8_t ch;
+	uint8_t ch;
 
 resynchronize:
-		/* Synchronize to the packet start */
-		while (ringbuf_peek_byte(&insider_rx_ring, 0, &ch) && 
-		       (ch != INSIDER_PACKET_START))
-			ringbuf_skip(&insider_rx_ring, 1);
+	/* Synchronize to the packet start */
+	while (ringbuf_peek_byte(&insider_rx_ring, 0, &ch) &&
+	       (ch != INSIDER_PACKET_START))
+		ringbuf_skip(&insider_rx_ring, 1);
 
-		/* If we didn't found the packet starter, we can try 
-		 * to parse the next chunk of data, or return to the caller */
-		if (ch != INSIDER_PACKET_START)
-			continue;
+	/* If we didn't found the packet starter, we can try
+	 * to parse the next chunk of data, or return to the caller */
+	if (ch != INSIDER_PACKET_START)
+		return false;
 
-		/* Try to determine the length of the packet */
-		uint8_t pklen;
-		if (!ringbuf_peek_byte(&insider_rx_ring, 1, &pklen))
-			continue;
-		
-		if (INSIDER_PACKET_HASLEN(pklen))
-			pklen = INSIDER_PACKET_LEN(pklen);
-		else if (!ringbuf_peek_byte(&insider_rx_ring, 2, &pklen))
-			continue;
-		
+	/* Try to determine the length of the packet */
+	uint8_t pklen;
+	if (!ringbuf_peek_byte(&insider_rx_ring, 1, &pklen))
+		return false;
 
-		pklen += 4;
-		if (ringbuf_read_available(&insider_rx_ring) < pklen)
-			continue;
+	if (INSIDER_PACKET_HASLEN(pklen))
+		pklen = INSIDER_PACKET_LEN(pklen) - 1;
+	else if (!ringbuf_peek_byte(&insider_rx_ring, 2, &pklen))
+		return false;
 
-		/* We detected that we have all needed data in the buffer. */
-		/* Check the CRC, skip the SOM */
-		uint8_t cs = 0;
-		for (size_t i = 1; i < pklen; i++) {
-			ringbuf_peek_byte(&insider_rx_ring, i, &ch);
-			cs += ch;
-		}
-		
-		if (cs != 0) {
-			/* Bad CRC. Try to resynchronize with next byte */
-			ringbuf_skip(&insider_rx_ring, 1);
-			goto resynchronize;
-		}
-		
-		/* Parse the found message by higher layer of protocol */
-		insider_protocol_parse();
 
-		/* Unbuffer the packet */
-		ringbuf_skip(&insider_rx_ring, pklen);
-		
+	pklen += 4;
+	if (ringbuf_read_available(&insider_rx_ring) < pklen)
+		return false;
 
-		/* Loop over all written data */
-	} while (length > 0);
+	/* We detected that we have all needed data in the buffer. */
+	/* Check the CRC, skip the SOM */
+	uint8_t cs = 0;
+	for (size_t i = 1; i < pklen; i++) {
+		ringbuf_peek_byte(&insider_rx_ring, i, &ch);
+		cs += ch;
+	}
+
+	if (cs != 0) {
+		/* Bad CRC. Try to resynchronize with next byte */
+		ringbuf_skip(&insider_rx_ring, 1);
+		goto resynchronize;
+	}
+
+	/* Parse the found message by higher layer of protocol */
+	insider_protocol_parse();
+
+	/* Unbuffer the packet */
+	ringbuf_skip(&insider_rx_ring, pklen);
+	return true;
 }
 
-void insider_packet_reply(const uint8_t *data, size_t length)
+void insider_packet_reply(uint8_t code, const uint8_t *data, size_t length)
 {
 	ringbuf_write_byte(&insider_tx_ring, INSIDER_PACKET_START);
+	ringbuf_write_byte(&insider_tx_ring, code);
 	ringbuf_write_buffer(&insider_tx_ring, data, length);
-	
-	uint8_t cs = 0;
-	for (size_t i=0; i< length; i++)
+
+	uint8_t cs = code;
+	for (size_t i = 0; i < length; i++)
 		cs += *data++;
-	
+
 	ringbuf_write_byte(&insider_tx_ring, (uint8_t)(0x100 - cs));
 }
+

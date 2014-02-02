@@ -24,49 +24,44 @@
 
 void insider_memory_read(uint32_t apos, size_t alen, size_t dlen)
 {
-	uint8_t reply[dlen + 1];
+	uint8_t reply[dlen];
 	uint8_t *address = 0;
 
 	ringbuf_peek_buffer(&insider_rx_ring, apos,(uint8_t *)&address, alen);
 
-	reply[0] = INSIDER_RSP_SUCCESS;
-
 	for (size_t i = 0; i < dlen; i++) {
-		reply[i + 1] = *address++;
+		reply[i] = *address++;
 	}
-	
-	insider_packet_reply(reply, dlen + 1);
+
+	insider_packet_reply(INSIDER_RSP_SUCCESS, reply, dlen);
 }
 
 void insider_memory_write(uint32_t apos, size_t alen, size_t dlen)
 {
-	uint8_t reply = INSIDER_RSP_SUCCESS;
 	uint8_t *address = 0;
 
 	ringbuf_peek_buffer(&insider_rx_ring, apos,(uint8_t *)&address, alen);
 	ringbuf_peek_buffer(&insider_rx_ring, apos + alen, address, dlen);
 
-	insider_packet_reply(&reply, 1);
+	insider_packet_reply(INSIDER_RSP_SUCCESS, 0, 0);
 }
 
 void insider_memory_write_mask(uint32_t apos, size_t alen, size_t dlen)
 {
-	uint8_t reply = INSIDER_RSP_SUCCESS;
 	uint8_t *address = 0;
 
 	ringbuf_peek_buffer(&insider_rx_ring, apos,(uint8_t *)&address, alen);
-	
+
 	uint32_t valpos = apos + alen;
 	uint32_t mskpos = apos + alen + dlen;
-	
+
 	for (size_t i = 0; i < dlen; i++, address++, valpos++, mskpos++) {
 		uint8_t val = 0, msk = 0;
 		ringbuf_peek_byte(&insider_rx_ring, valpos, &val);
 		ringbuf_peek_byte(&insider_rx_ring, mskpos, &msk);
-		
+
 		*address = (*address & ~msk) | (val & msk);
-	
 	}
 
-	insider_packet_reply(&reply, 1);
+	insider_packet_reply(INSIDER_RSP_SUCCESS, 0, 0);
 }

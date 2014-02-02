@@ -18,7 +18,16 @@
  */
 
 #include <stdint.h>
-#include "insider/insider.h"
 #include "insider/packet.h"
 #include "insider/protocol.h"
 #include "insider/scope.h"
+
+void insider_buffer_write(uint8_t *data, size_t length)
+{
+    ringbuf_write_buffer(&insider_rx_ring, data, length);
+}
+
+size_t insider_buffer_read(uint8_t *data, size_t length)
+{
+	return ringbuf_read_buffer_partial(&insider_tx_ring, data, length);
+}
