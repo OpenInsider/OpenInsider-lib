@@ -24,8 +24,9 @@
 #include "insider/scope.h"
 
 #define _Q(var)		#var
+#define _QQ(var)	_Q(var)
 
-static const char* const board_name = _Q(INSIDER_BOARD_NAME);
+static const char* const board_name = _QQ(INSIDER_BOARD_NAME);
 
 static void insider_protocol_getinfo(bool full)
 {
