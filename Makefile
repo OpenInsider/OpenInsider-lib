@@ -50,37 +50,34 @@ DEFS	+= -DINSIDER_BUFFER_SIZE=$(INSIDER_BUFFER_SIZE)
 DEFS	+= -DINSIDER_BOARD_FW=$(INSIDER_BOARD_FW)
 DEFS	+= -DINSIDER_BOARD_NAME=$(INSIDER_BOARD_NAME)
 
-TOBJS	:= $(addprefix tmp/,$(OBJS))
+OBJS	:= $(addprefix tmp/,$(OBJS))
 
 ###############################################################################
 # Rules
 
-.PHONY: all dirs clean
+.PHONY: all
+all: bin/libopeninsider_$(TARGET).a
 
-all: bin tmp bin/libopeninsider_$(TARGET).a
-
+.PHONY: clean
 clean:
 	@printf "  \e[31;1mCLEAN\e[0m\n"
 	$(Q)$(RM) -d -rf tmp bin
 
+.PHONY: distclean
 distclean:
 	@printf "  \e[31;1mDISTCLEAN\e[0m\n"
 	$(Q)$(RM) -d -rf tmp
 
-bin/libopeninsider_$(TARGET).a: $(TOBJS)
+bin/libopeninsider_$(TARGET).a: $(TOBJS) bin
 	@printf "  \e[33;1mAR\e[0m      libopeninsider_$(TARGET).a\n"
 	$(Q)$(AR) $(ARFLAGS) $@ $(TOBJS)
 
-tmp/%o: %c
+tmp/%.o: %.c tmp
 	@printf "  \e[32;1mCC\e[0m      $<\n"
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -o $@ -c $<
 
-bin:
-	@printf "  \e[35;1mDIR\e[0m     bin\n"
-	@mkdir -p bin
+bin tmp:
+	@printf "  \e[35;1mDIR\e[0m     $@\n"
+	@mkdir -p $@
 
-tmp:
-	@printf "  \e[35;1mDIR\e[0m     tmp\n"
-	@mkdir -p tmp
-
--include $(TOBJS:.o=.d)
+-include $(OBJS:.o=.d)
