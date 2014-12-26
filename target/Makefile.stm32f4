@@ -18,3 +18,4 @@
 ##
 
 ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
+LLVM_TARGET := -target thumbv7m-unknown-none-eabi

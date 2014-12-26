@@ -18,7 +18,6 @@
  */
 
 #include <stdint.h>
-#include <string.h>
 #include "insider/insider.h"
 
 void insider_init(void)

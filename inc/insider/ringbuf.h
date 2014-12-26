@@ -36,7 +36,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 struct ringbuf {
 	uint8_t *buffer;
@@ -63,7 +62,8 @@ void ringbuf_init(struct ringbuf *rb, uint8_t *buffer, size_t bufsize)
 	rb->rptr = rb->wptr = 0;
 
 	/* Clear the buffer */
-	memset(buffer, 0, bufsize);
+	for (size_t i = 0; i < bufsize; i++)
+		buffer[i] = 0;
 }
 
 /*---------------------------------------------------------------------------*/

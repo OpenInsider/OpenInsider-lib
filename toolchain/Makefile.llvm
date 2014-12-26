@@ -17,15 +17,9 @@
 ## along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-PREFIX		= arm-none-eabi
+PREFIX		=
 
-CC		:= $(PREFIX)-gcc
-CXX		:= $(PREFIX)-g++
-LD		:= $(PREFIX)-gcc
-AR		:= $(PREFIX)-ar
-AS		:= $(PREFIX)-as
-OBJCOPY		:= $(PREFIX)-objcopy
-OBJDUMP		:= $(PREFIX)-objdump
-SIZE		:= $(PREFIX)-size
-
-GDB		:= $(PREFIX)-gdb
+CC		= clang $(LLVM_TARGET)
+CXX		= clang++ $(LLVM_TARGET)
+AR		= llvm-ar
+OBJDUMP		= llvm-objdump

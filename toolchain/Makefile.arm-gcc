@@ -21,11 +21,6 @@ PREFIX		= arm-none-eabi-
 
 CC		:= $(PREFIX)gcc
 CXX		:= $(PREFIX)g++
-LD		:= $(PREFIX)gcc
 AR		:= $(PREFIX)ar
-AS		:= $(PREFIX)as
 OBJCOPY		:= $(PREFIX)objcopy
 OBJDUMP		:= $(PREFIX)objdump
-SIZE		:= $(PREFIX)size
-
-GDB		:= $(PREFIX)gdb

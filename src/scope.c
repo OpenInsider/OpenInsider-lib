@@ -18,7 +18,6 @@
  */
 
 #include <stdint.h>
-#include <string.h>
 #include "insider/insider.h"
 #include "insider/packet.h"
 #include "insider/protocol.h"
@@ -51,6 +50,16 @@ void insider_scope_setup(size_t asiz)
 	insider_packet_reply(INSIDER_RSP_SUCCESS, 0, 0);
 }
 
+static void _local_memcpy(void *dst, const void * src, size_t sz)
+{
+	uint8_t *d = dst;
+	const uint8_t *s = src;
+	
+	for (size_t i = 0; i < sz; i++)	{
+		*d++ = *s++;
+	}
+}
+
 void insider_scope_read(void)
 {
 	if (scope_var_count == 0) {
@@ -62,7 +71,7 @@ void insider_scope_read(void)
 	uint8_t cnt = 0;
 
 	for (size_t i = 0; i < scope_var_count; i++) {
-		memcpy(ptr, scope_vars[i].ptr, scope_vars[i].sz);
+		_local_memcpy(ptr, scope_vars[i].ptr, scope_vars[i].sz);
 		ptr += scope_vars[i].sz;
 		cnt += scope_vars[i].sz;
 	}
