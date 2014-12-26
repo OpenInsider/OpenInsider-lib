@@ -68,9 +68,9 @@ distclean:
 	@printf "  DISTCLEAN\n"
 	$(Q)$(RM) -d -rf tmp
 
-bin/libopeninsider_$(TARGET).a: $(TOBJS) bin
+bin/libopeninsider_$(TARGET).a: $(OBJS) bin
 	@printf "  AR      libopeninsider_$(TARGET).a\n"
-	$(Q)$(AR) $(ARFLAGS) $@ $(TOBJS)
+	$(Q)$(AR) $(ARFLAGS) $@ $(OBJS)
 
 tmp/%.o: %.c tmp
 	@printf "  CC      $<\n"
