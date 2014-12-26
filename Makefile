@@ -60,24 +60,24 @@ all: bin/libopeninsider_$(TARGET).a
 
 .PHONY: clean
 clean:
-	@printf "  \e[31;1mCLEAN\e[0m\n"
+	@printf "  CLEAN\n"
 	$(Q)$(RM) -d -rf tmp bin
 
 .PHONY: distclean
 distclean:
-	@printf "  \e[31;1mDISTCLEAN\e[0m\n"
+	@printf "  DISTCLEAN\n"
 	$(Q)$(RM) -d -rf tmp
 
 bin/libopeninsider_$(TARGET).a: $(TOBJS) bin
-	@printf "  \e[33;1mAR\e[0m      libopeninsider_$(TARGET).a\n"
+	@printf "  AR      libopeninsider_$(TARGET).a\n"
 	$(Q)$(AR) $(ARFLAGS) $@ $(TOBJS)
 
 tmp/%.o: %.c tmp
-	@printf "  \e[32;1mCC\e[0m      $<\n"
+	@printf "  CC      $<\n"
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -o $@ -c $<
 
 bin tmp:
-	@printf "  \e[35;1mDIR\e[0m     $@\n"
+	@printf "  DIR     $@\n"
 	@mkdir -p $@
 
 -include $(OBJS:.o=.d)
